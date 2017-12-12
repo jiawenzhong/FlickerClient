@@ -1,0 +1,51 @@
+﻿<Window x:Class="FlickrClient.MainWindow"
+        x:Name="MainView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FlickrClient"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:Command="http://www.galasoft.ch/mvvmlight"
+        mc:Ignorable="d"
+    Title="Flickr Client" Height="417.6" Width="610">
+    <Grid DataContext="{Binding Main, Source={StaticResource Locator}}">
+        <!--text box the user types in searching keywords-->
+        <TextBox x:Name="SearchTextBox" Text="{Binding Search}" HorizontalAlignment="Left" Height="19" Margin="159,28,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="246" />
+        <!--button that will retrieve the result from the Flickr server-->
+        <Button Content="Search" HorizontalAlignment="Left" Margin="427,28,0,0" VerticalAlignment="Top" Width="75" Command="{Binding SearchCommand}"/>
+        <!--list box that contains the search result list, binds with SearchList as source and SelectedSearch for selected element-->
+        <ListBox x:Name="listbox" ItemsSource="{Binding SearchList}" SelectedItem="{Binding SelectedSearch, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="295" Margin="10,59,0,0" VerticalAlignment="Top" Width="166">
+            <!--bind commands when an element is selected in the list-->
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseUp">
+                    <Command:EventToCommand Command="{Binding DisplayCommand}" CommandParameter="{Binding ElementName=listBox,Path=SelectedSearch}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            <!--bind display member in the list-->
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock>
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0}">
+                                    <!--bind to the Title of the result-->
+                                    <Binding Path="Title"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <!--bind the image from the ViewModel-->
+        <Image HorizontalAlignment="Left" Height="295" Margin="191,59,0,0" VerticalAlignment="Top" Width="402" Source="{Binding Photo, UpdateSourceTrigger=PropertyChanged}"/>
+        <!--exit button binds with exitcommand-->
+        <Button Content="Exit" HorizontalAlignment="Left" Margin="518,28,0,0" VerticalAlignment="Top" Width="75" Command="{Binding ExitCommand, Mode=OneWay}" 
+                CommandParameter="{Binding ElementName=MainView}"/>
+        <!--prompt user to type in search keywrd-->
+        <Label Content="Type in value for search: " HorizontalAlignment="Left" Margin="10,22,0,0" VerticalAlignment="Top"/>
+
+    </Grid>
+</Window>
